@@ -190,7 +190,6 @@ if (apiResponse1.success && apiResponse2.success) {
     <textarea value={result2} readOnly className="w-full h-36 p-2 mt-2 border border-gray-300 rounded-lg resize-y" />
   </div>
 )}
-</div>
     </div>
 
   </div>
