@@ -136,7 +136,7 @@ const App: React.FC = () => {
 
   return (
     <div className="flex">
-      <div className="text-center mx-auto my-5 p-5 border border-gray-300 rounded-lg max-w-md">
+      <div className="text-center mx-auto my-5 p-5 max-w-full">
         <h1 className="text-xl font-bold mb-5">Bye Email Anxiety 😊👋 </h1>
   
         {/* Slider to select the max tokens */}
