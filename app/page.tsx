@@ -17,6 +17,8 @@ const App: React.FC = () => {
   const [selectedOption, setSelectedOption] = useState<string>('off'); // Option for detail level of analysis
   const [maxTokens, setMaxTokens] = useState<number>(50); // Max tokens for analysis
   const [base64Image, setBase64Image] = useState<string>('');
+  const [result2, setResult2] = useState<string>('');
+
 
   // Callback for handling file selection changes
   const handleFileChange = useCallback(async (selectedFile: File) => {
@@ -42,37 +44,53 @@ const App: React.FC = () => {
     setStatusMessage('Sending request...');
     setUploadProgress(40); // Progress after image conversion
 
-    // Send a POST request to your API endpoint
-    const response = await fetch('/api/upload_gpt4v', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ 
-        file: base64Image, 
-        prompt: textInput, 
-        detail: selectedOption !== 'off' ? selectedOption : undefined, 
-        max_tokens: maxTokens 
-      }),
-    });
+// Send a POST request to your API endpoint with the first prompt
+const response1 = await fetch('/api/upload_gpt4v', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ 
+    file: base64Image, 
+    prompt: "which colors do you see in this image", 
+    detail: selectedOption !== 'off' ? selectedOption : undefined, 
+    max_tokens: maxTokens 
+  }),
+});
 
-    setUploadProgress(60); // Progress after sending request
+// Send a POST request to your API endpoint with the second prompt
+const response2 = await fetch('/api/upload_gpt4v', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ 
+    file: base64Image, 
+    prompt: "what is the file size of this image", 
+    detail: selectedOption !== 'off' ? selectedOption : undefined, 
+    max_tokens: maxTokens 
+  }),
+});
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+setUploadProgress(60); // Progress after sending request
 
-    const apiResponse = await response.json();
-    setUploadProgress(80); // Progress after receiving response
+if (!response1.ok || !response2.ok) {
+  throw new Error(`HTTP error! status: ${response1.status}, ${response2.status}`);
+}
 
-    if (apiResponse.success) {
-      setResult(apiResponse.analysis);
-      setStatusMessage('Analysis complete.');
-      setUploadProgress(100); // Final progress
-    } else {
-      setStatusMessage(apiResponse.message);
-    }
-  };
+const apiResponse1 = await response1.json();
+const apiResponse2 = await response2.json();
+setUploadProgress(80); // Progress after receiving response
+
+if (apiResponse1.success && apiResponse2.success) {
+  setResult(apiResponse1.analysis);
+  setResult2(apiResponse2.analysis);
+  setStatusMessage('Analysis complete.');
+  setUploadProgress(100); // Final progress
+} else {
+  setStatusMessage(apiResponse1.message || apiResponse2.message);
+}
+};
 
   // Callbacks for handling drag-and-drop events
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
@@ -99,15 +117,6 @@ const App: React.FC = () => {
     <div className="flex">
     <div className="text-center mx-auto my-5 p-5 border border-gray-300 rounded-lg max-w-md">
       <h1 className="text-xl font-bold mb-5">OpenAI Image Analysis</h1>
-  
-      {/* Text input field for custom question or prompt */}
-      <input 
-        type="text"
-        value={textInput}
-        onChange={(e) => setTextInput(e.target.value)}
-        placeholder="Enter a custom question or prompt"
-        className="mb-5 p-2 border border-gray-300 rounded-lg w-full"
-      />
 
       {/* Slider to select the max tokens */}
       <p className="text-sm text-gray-600 mb-1">Max tokens: {maxTokens}</p>
@@ -175,6 +184,13 @@ const App: React.FC = () => {
           <textarea value={result} readOnly className="w-full h-36 p-2 mt-2 border border-gray-300 rounded-lg resize-y" />
         </div>
       )}
+      {result2 && (
+  <div className="mt-5">
+    <strong>Second Analysis Result:</strong>
+    <textarea value={result2} readOnly className="w-full h-36 p-2 mt-2 border border-gray-300 rounded-lg resize-y" />
+  </div>
+)}
+</div>
     </div>
 
   </div>
