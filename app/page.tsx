@@ -9,23 +9,37 @@ const App: React.FC = () => {
   // State management for various functionalities
   const [file, setFile] = useState<File | null>(null); // Holds the selected image file
   const [preview, setPreview] = useState<string>(''); // URL for the image preview
-  const [result, setResult] = useState<string>(''); // Stores the analysis result
   const [statusMessage, setStatusMessage] = useState<string>(''); // Displays status messages to the user
   const [uploadProgress, setUploadProgress] = useState<number>(0); // Manages the upload progress
   const [dragOver, setDragOver] = useState<boolean>(false); // UI state for drag-and-drop
   const [textInput, setTextInput] = useState<string>(''); // Custom text input by the user
-  const [selectedOption, setSelectedOption] = useState<string>('off'); // Option for detail level of analysis
   const [maxTokens, setMaxTokens] = useState<number>(50); // Max tokens for analysis
   const [base64Image, setBase64Image] = useState<string>('');
-  const [result2, setResult2] = useState<string>('');
 
+  // Add new state variables for each result container
+  const [result1, setResult1] = useState<string>('');
+  const [result2, setResult2] = useState<string>('');
+  const [result3, setResult3] = useState<string>('');
+  const [result4, setResult4] = useState<string>('');
+  const [result5, setResult5] = useState<string>('');
+  const [result6, setResult6] = useState<string>('');
+
+  // Names
+  const resultNames = [
+    "short but soft 🐱",
+    "professional 😊",
+    "match tone 🤝",
+    "that girl 💅",
+    "politely, no👩‍💻",
+    "placeholder"
+  ];
 
   // Callback for handling file selection changes
   const handleFileChange = useCallback(async (selectedFile: File) => {
     // Updating state with the new file and its preview URL
     setFile(selectedFile);
     setPreview(URL.createObjectURL(selectedFile));
-    setStatusMessage('Image selected. Click "Analyze Image" to proceed.');
+    setStatusMessage('Image selected. Click "Analyze" to proceed.');
     setUploadProgress(0);
 
     // Convert the file to a base64 string and store it in the state
@@ -41,56 +55,63 @@ const App: React.FC = () => {
       return;
     }
 
-    setStatusMessage('Sending request...');
-    setUploadProgress(40); // Progress after image conversion
+    setStatusMessage('Processing');
+    setUploadProgress(20); // Adjust progress after image conversion
 
-// Send a POST request to your API endpoint with the first prompt
-const response1 = await fetch('/api/upload_gpt4v', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ 
-    file: base64Image, 
-    prompt: "which colors do you see in this image", 
-    detail: selectedOption !== 'off' ? selectedOption : undefined, 
-    max_tokens: maxTokens 
-  }),
-});
+    // Define an array of prompts
+    const prompts = [
+      "Generate a concise, friendly response for this email. The tone should be soft and approachable, with a touch of warmth.",
+      "craft a reply to a request for feedback that exudes capability and professionalism, balancing courteous language with a businesslike approach",
+      "respond in a style that matches the tone of the email",
+      "Generate a response to this email. The tone should be confident and graceful.",
+      "Construct a response to a request for assistance that subtly conveys competence and a preference for minimal interaction. acknowledge but decline subtly to do any work in the most professional way. The tone should be professional yet distant.",
+      "placeholder eh"
+    ];
 
-// Send a POST request to your API endpoint with the second prompt
-const response2 = await fetch('/api/upload_gpt4v', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ 
-    file: base64Image, 
-    prompt: "what is the file size of this image", 
-    detail: selectedOption !== 'off' ? selectedOption : undefined, 
-    max_tokens: maxTokens 
-  }),
-});
+    // Send a POST request to your API endpoint for each prompt
+    const responses = await Promise.all(prompts.map(prompt =>
+      fetch('/api/upload_gpt4v', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          file: base64Image, 
+          prompt, 
+          detail: undefined, 
+          max_tokens: maxTokens 
+        }),
+      })
+    ));
 
-setUploadProgress(60); // Progress after sending request
+    setUploadProgress(60); // Progress after sending requests
 
-if (!response1.ok || !response2.ok) {
-  throw new Error(`HTTP error! status: ${response1.status}, ${response2.status}`);
-}
+    // Check if all requests were successful
+    if (responses.some(response => !response.ok)) {
+      throw new Error(`HTTP error! status: ${responses.find(response => !response.ok)?.status}`);
+    }
 
-const apiResponse1 = await response1.json();
-const apiResponse2 = await response2.json();
-setUploadProgress(80); // Progress after receiving response
+    // Get the analysis results
+    const apiResponses = await Promise.all(responses.map(response => response.json()));
+    setUploadProgress(80); // Progress after receiving responses
 
-if (apiResponse1.success && apiResponse2.success) {
-  setResult(apiResponse1.analysis);
-  setResult2(apiResponse2.analysis);
-  setStatusMessage('Analysis complete.');
-  setUploadProgress(100); // Final progress
-} else {
-  setStatusMessage(apiResponse1.message || apiResponse2.message);
-}
-};
+    // Check if all analyses were successful
+    if (apiResponses.some(apiResponse => !apiResponse.success)) {
+      setStatusMessage(apiResponses.find(apiResponse => !apiResponse.success)?.message);
+      return;
+    }
+
+    // Update the results
+    setResult1(apiResponses[0].analysis);
+    setResult2(apiResponses[1].analysis);
+    setResult3(apiResponses[2].analysis);
+    setResult4(apiResponses[3].analysis);
+    setResult5(apiResponses[4].analysis);
+    setResult6(apiResponses[5].analysis);
+
+    setStatusMessage('Analysis complete.');
+    setUploadProgress(100); // Final progress
+  };
 
   // Callbacks for handling drag-and-drop events
   const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
@@ -115,35 +136,20 @@ if (apiResponse1.success && apiResponse2.success) {
 
   return (
     <div className="flex">
-    <div className="text-center mx-auto my-5 p-5 border border-gray-300 rounded-lg max-w-md">
-      <h1 className="text-xl font-bold mb-5">OpenAI Image Analysis</h1>
-
-      {/* Slider to select the max tokens */}
-      <p className="text-sm text-gray-600 mb-1">Max tokens: {maxTokens}</p>
-      <input 
-        type="range" 
-        min="50" 
-        max="800" 
-        value={maxTokens} 
-        onChange={(e) => setMaxTokens(Number(e.target.value))} 
-        className="mb-5"
-      />
-
-      {/* Text above the dropdown menu */}
-      <p className="text-sm text-gray-600 mb-1">Select the detail level (optional):</p>
-      {/* Dropdown to select the detail level */}
-      <select 
-        value={selectedOption} 
-        onChange={(e) => setSelectedOption(e.target.value)} 
-        className="w-20 mb-5 p-2 border border-gray-300 rounded-lg"
-      >
-        <option value="off">Off</option>
-        <option value="low">Low</option>
-        <option value="high">High</option>
-      </select>
+      <div className="text-center mx-auto my-5 p-5 border border-gray-300 rounded-lg max-w-md">
+        <h1 className="text-xl font-bold mb-5">Bye Email Anxiety 😊👋 </h1>
   
+        {/* Slider to select the max tokens */}
+        <p className="text-sm text-gray-600 mb-1">Max tokens: {maxTokens}</p>
+        <input 
+          type="range" 
+          min="50" 
+          max="800" 
+          value={maxTokens} 
+          onChange={(e) => setMaxTokens(Number(e.target.value))} 
+          className="mb-5"
+        />
 
-  
       <div 
         className={`border-2 border-dashed border-gray-400 rounded-lg p-10 cursor-pointer mb-5 ${dragOver ? 'border-blue-300 bg-gray-100' : ''}`}
         onDrop={handleDrop}
@@ -165,35 +171,33 @@ if (apiResponse1.success && apiResponse2.success) {
         {preview ? (
           <img src={preview} alt="Preview" className="max-w-full max-h-48 mb-5 mx-auto" />
         ) : (
-          <p>Drag and drop an image here, or click to select an image to upload.</p>
+          <p>Drag and drop a screenshot of your email here, or click to select an image to upload.</p>
         )}
       </div>
       <div className="flex justify-center items-center mb-5">
         {uploadProgress === 0 || uploadProgress === 100 ? (
           <button onClick={handleSubmit} className="bg-blue-500 text-white py-2 px-5 rounded-lg cursor-pointer text-lg hover:bg-blue-700">
-            Analyze Image
+            Analyze
           </button>
         ) : (
           <progress value={uploadProgress} max="100" className="w-1/2"></progress>
         )}
       </div>
       {statusMessage && <p className="text-gray-600 mb-5">{statusMessage}</p>}
-      {result && (
-        <div className="mt-5">
-          <strong>Analysis Result:</strong>
-          <textarea value={result} readOnly className="w-full h-36 p-2 mt-2 border border-gray-300 rounded-lg resize-y" />
+      
+      {result1 && result2 && result3 && result4 && result5 && result6 && (
+        <div className="flex flex-wrap justify-between mt-5">
+          {[result1, result2, result3, result4, result5, result6].map((result, index) => (
+            <div key={index} className="w-full sm:w-1/2 lg:w-1/3 p-2">
+              <strong>{resultNames[index]}:</strong>
+              <textarea value={result} readOnly className="w-full h-36 p-2 mt-2 border border-gray-300 rounded-lg resize-y" />
+            </div>
+          ))}
         </div>
       )}
-      {result2 && (
-  <div className="mt-5">
-    <strong>Second Analysis Result:</strong>
-    <textarea value={result2} readOnly className="w-full h-36 p-2 mt-2 border border-gray-300 rounded-lg resize-y" />
-  </div>
-)}
     </div>
-
   </div>
-  );
+);
 }
 
 export default App;
