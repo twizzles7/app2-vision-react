@@ -1,3 +1,4 @@
+aya
 import { experimental_AssistantResponse } from 'ai';
 import OpenAI from 'openai';
 import { MessageContentText } from 'openai/resources/beta/threads/messages/messages';
