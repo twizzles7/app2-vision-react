@@ -176,7 +176,7 @@ const App: React.FC = () => {
         </div>
       )}
     </div>
-    <ChatComponent base64Image={base64Image} />
+
   </div>
   );
 }
