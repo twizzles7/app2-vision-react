@@ -69,7 +69,7 @@ const App: React.FC = () => {
 
     // Check trial count before proceeding
     if (trialCount >= 5) {
-      if (window.confirm("It costs me money to maintain servers, would you like to support and buy lifetime access for $2.99? For feedback email reallycoolapp7@gmail.com")) {
+      if (window.confirm("ola, would you like to support and buy lifetime access for $2.99? For feedback email reallycoolapp7@gmail.com")) {
         // Redirect to Stripe payment page
         window.location.href = 'https://buy.stripe.com/3cs7uB92D10G1IQ289';
       }
