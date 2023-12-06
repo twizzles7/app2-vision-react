@@ -68,7 +68,7 @@ const App: React.FC = () => {
     }
 
     // Check trial count before proceeding
-    if (trialCount >= 5) {
+    if (trialCount >= 1) { // Changed from 5 to 1
       if (window.confirm("ola, would you like to support and buy lifetime access for $2.99? For feedback email reallycoolapp7@gmail.com")) {
         // Redirect to Stripe payment page
         window.location.href = 'https://buy.stripe.com/3cs7uB92D10G1IQ289';
@@ -177,7 +177,7 @@ const App: React.FC = () => {
         />
 
         {/* Display the number of trials left */}
-        <p className="text-sm text-gray-600 mb-1">Trials left: {5 - trialCount}</p>
+        <p className="text-sm text-gray-600 mb-1">Trials left: {1 - trialCount}</p> // Changed from 5 to 1
 
       <div 
         className={`border-2 border-dashed border-gray-400 rounded-lg p-10 cursor-pointer mb-5 ${dragOver ? 'border-blue-300 bg-gray-100' : ''}`}
