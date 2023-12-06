@@ -28,6 +28,9 @@ const App: React.FC = () => {
   // New state variable for trial count
   const [trialCount, setTrialCount] = useState<number>(0);
 
+  // Add a new state variable for controlling the visibility of the modal
+  const [showModal, setShowModal] = useState<boolean>(false);
+
   // Load trial count from local storage when component mounts
   useEffect(() => {
     const storedTrialCount = localStorage.getItem('trialCount');
@@ -69,15 +72,183 @@ const App: React.FC = () => {
 
     // Check trial count before proceeding
     if (trialCount >= 5) {
-      if (window.confirm("It costs me money to maintain servers, would you like to support and buy lifetime access for $2.99? For feedback email reallycoolapp7@gmail.com")) {
-        // Redirect to Stripe payment page
-        window.location.href = 'https://buy.stripe.com/3cs7uB92D10G1IQ289';
-      }
+      // Show the modal instead of using window.confirm
+      setShowModal(true);
       return;
     }
 
     setStatusMessage('Processing');
     setUploadProgress(20); // Adjust progress after image conversion
+
+    // Define an array of prompts
+    const prompts = [
+      "Generate a concise, friendly response for this email. The tone should be soft and approachable, with a touch of warmth.",
+      "craft a reply to a request for feedback that exudes capability and professionalism, balancing courteous language with a businesslike approach",
+      "respond in a style that matches the tone of the email",
+      "Generate a response to this email. The tone should be confident and graceful.",
+      "Construct a response to a request for assistance that subtly conveys competence and a preference for minimal interaction. acknowledge but decline subtly to do any work in the most professional way. The tone should be professional yet distant.",
+      "you are an expert person analyzer. guess the MBTI of this person, based on their email. use words and elements from their email as evidence for your statement. use bullet points, answer in a hierarchy and be very structured in your answer. use formatting as well and bold where needed. the structure of your answer. the first thing you should say is 1) *they are likely to be a* + the likely MBTI type. 2) *what are* the likely MBTI type *known for*: what they are known for 3) *why?* your reasoning "
+    ];
+
+    // Send a POST request to your API endpoint for each prompt
+    const responses = await Promise.all(prompts.map(prompt =>
+      fetch('/api/upload_gpt4v', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          file: base64Image, 
+          prompt, 
+          detail: undefined, 
+          max_tokens: maxTokens 
+        }),
+      })
+    ));
+
+    setUploadProgress(60); // Progress after sending requests
+
+    // Check if all requests were successful
+    if (responses.some(response => !response.ok)) {
+      throw new Error(`HTTP error! status: ${responses.find(response => !response.ok)?.status}`);
+    }
+
+    // Get the analysis results
+    const apiResponses = await Promise.all(responses.map(response => response.json()));
+    setUploadProgress(80); // Progress after receiving responses
+
+    // Check if all analyses were successful
+    if (apiResponses.some(apiResponse => !apiResponse.success)) {
+      setStatusMessage(apiResponses.find(apiResponse => !apiResponse.success)?.message);
+      return;
+    }
+
+    // Update the results
+    setResult1(apiResponses[0].analysis);
+    setResult2(apiResponses[1].analysis);
+    setResult3(apiResponses[2].analysis);
+    setResult4(apiResponses[3].analysis);
+    setResult5(apiResponses[4].analysis);
+    setResult6(apiResponses[5].analysis);
+
+    setStatusMessage('Analysis complete.');
+    setUploadProgress(100); // Final progress
+
+    // Increment trial count after successful analysis
+    const newTrialCount = trialCount + 1;
+    setTrialCount(newTrialCount);
+    localStorage.setItem('trialCount', String(newTrialCount));
+  };
+
+  // Callbacks for handling drag-and-drop events
+  const handleDragOver = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragOver(true);
+  }, []);
+
+  const handleDragLeave = useCallback(() => {
+    setDragOver(false);
+  }, []);
+
+  const handleDrop = useCallback((event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragOver(false);
+    const files = event.dataTransfer.files;
+    if (files.length) {
+      handleFileChange(files[0]);
+    }
+  }, [handleFileChange]);
+
+  // JSX for the component rendering
+
+  return (
+    <div className="flex">
+      <div className="text-center mx-auto my-5 p-5 max-w-full">
+        <h1 className="text-xl font-bold mb-5">Bye Email Anxiety 😊👋 </h1>
+  
+        {/* Slider to select the max tokens */}
+        <p className="text-sm text-gray-600 mb-1">Max tokens: {maxTokens}</p>
+        <input 
+          type="range" 
+          min="50" 
+          max="800" 
+          value={maxTokens} 
+          onChange={(e) => setMaxTokens(Number(e.target.value))} 
+          className="mb-5"
+        />
+
+        {/* Display the number of trials left */}
+        <p className="text-sm text-gray-600 mb-1">Trials left: {5 - trialCount}</p>
+
+      <div 
+        className={`border-2 border-dashed border-gray-400 rounded-lg p-10 cursor-pointer mb-5 ${dragOver ? 'border-blue-300 bg-gray-100' : ''}`}
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onClick={() => document.getElementById('fileUpload')?.click()}
+      >
+        <input 
+          id="fileUpload"
+          type="file" 
+          onChange={(e) => {
+            if (e.target.files && e.target.files.length > 0) {
+              handleFileChange(e.target.files[0]);
+            }
+          }}
+          accept="image/*" 
+          className="hidden" 
+        />
+        {preview ? (
+          <img src={preview} alt="Preview" className="max-w-full max-h-48 mb-5 mx-auto" />
+        ) : (
+          <p>Drag and drop a screenshot of your email here, or click to select an image to upload.</p>
+        )}
+      </div>
+      <div className="flex justify-center items-center mb-5">
+        {uploadProgress === 0 || uploadProgress === 100 ? (
+          <button onClick={handleSubmit} className="bg-blue-500 text-white py-2 px-5 rounded-lg cursor-pointer text-lg hover:bg-blue-700">
+            Analyze
+          </button>
+        ) : (
+          <progress value={uploadProgress} max="100" className="w-1/2"></progress>
+        )}
+      </div>
+      {statusMessage && <p className="text-gray-600 mb-5">{statusMessage}</p>}
+      
+      {result1 && result2 && result3 && result4 && result5 && result6 && (
+        <div className="flex flex-wrap justify-between mt-5">
+          {[result1, result2, result3, result4, result5, result6].map((result, index) => (
+            <div key={index} className="w-full sm:w-1/2 lg:w-1/3 p-2">
+              <strong>{resultNames[index]}:</strong>
+              <div className="w-full h-45 p-2 mt-2 border border-gray-300 rounded-lg resize-y overflow-auto" dangerouslySetInnerHTML={{ __html: marked(result) }} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Add the modal */}
+      {showModal && (
+        <div className="fixed z-10 inset-0 overflow-y-auto">
+          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
+              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                <div className="sm:flex sm:items-start">
+                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                    <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                      It costs me money to maintain servers, would you like to support and buy lifetime access for $2.99?
+                    </h3>
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-500">
+                        For feedback email reallycoolapp7@gmail.com
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-gray-50 px-4 after image conversion
 
     // Define an array of prompts
     const prompts = [
