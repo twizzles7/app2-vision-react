@@ -174,6 +174,9 @@ const App: React.FC = () => {
           className="mb-5"
         />
 
+        {/* Display the number of trials left */}
+        <p className="text-sm text-gray-600 mb-1">Trials left: {5 - trialCount}</p>
+
       <div 
         className={`border-2 border-dashed border-gray-400 rounded-lg p-10 cursor-pointer mb-5 ${dragOver ? 'border-blue-300 bg-gray-100' : ''}`}
         onDrop={handleDrop}
