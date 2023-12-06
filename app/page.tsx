@@ -38,12 +38,12 @@ const App: React.FC = () => {
 
   // Names
   const resultNames = [
-    "short but soft 🐱",
-    "professional 😊",
     "match tone 🤝",
-    "that girl 💅",
-    "politely, no👩‍💻",
-    "MBTI analyzer"
+    "short & professional 👩‍💻",
+    "politely, no 🙅‍♀️",
+    "MBTI Advanced Analysis 🙅‍♀️",
+    "MBTI Likes and Dislikes",
+    "MBTI-Match Response"
   ];
 
   // Callback for handling file selection changes
@@ -81,12 +81,12 @@ const App: React.FC = () => {
 
     // Define an array of prompts
     const prompts = [
-      "Generate a concise, friendly response for this email. The tone should be soft and approachable, with a touch of warmth.",
-      "craft a reply to a request for feedback that exudes capability and professionalism, balancing courteous language with a businesslike approach",
       "respond in a style that matches the tone of the email",
-      "Generate a response to this email. The tone should be confident and graceful.",
+      "craft a reply to a request for feedback that exudes capability and professionalism, balancing courteous language with a businesslike approach",
       "Construct a response to a request for assistance that subtly conveys competence and a preference for minimal interaction. acknowledge but decline subtly to do any work in the most professional way. The tone should be professional yet distant.",
-      "you are an expert person analyzer. guess the MBTI of this person, based on their email. use words and elements from their email as evidence for your statement. use bullet points, answer in a hierarchy and be very structured in your answer. use formatting as well and bold where needed. the structure of your answer. the first thing you should say is 1) *they are likely to be a* + the likely MBTI type. 2) *what are* the likely MBTI type *known for*: what they are known for 3) *why?* your reasoning "
+      "you are an expert person analyzer. guess the MBTI of this person. your answer has to be framed in this way first line is 1) guess the MBTI of this person. you have to say it in the way *they are likely to be * + 4 characters of the MBTI. 2) use words and elements from their email as evidence for why they are this MBTI. answer in a hierarchy and be very structured in your answer. use formatting as well and bold where needed",
+      "you are an expert person analyzer. guess the MBTI of this person. your answer has to be framed in this way first line is 1) guess the MBTI of this person. you have to say it in the way *they are likely to be * + 4 characters of the MBTI. the second line of the answer 2) this *MBTI TYPE* is known for + what they are known for. and 3) how to handle this MBTI type, what they like and dont like. 4) examples of phrases and words you should use with this type",
+      "you are an expert person analyzer. guess the MBTI of this person. your answer has to be framed in this way first line is 1) guess the MBTI of this person. you have to say it in the way *they are likely to be * + 4 characters of the MBTI. the second line of the answer 2) what is the right way to respond to this person, based on their MBTI personality,"
     ];
 
     // Send a POST request to your API endpoint for each prompt
@@ -177,7 +177,7 @@ const App: React.FC = () => {
         />
 
         {/* Display the number of trials left */}
-        <p className="text-sm text-gray-600 mb-1">Trials left: {1 - trialCount}</p> // Changed from 5 to 1
+        <p className="text-sm text-gray-600 mb-1">Trials left: {1 - trialCount}</p> 
 
       <div 
         className={`border-2 border-dashed border-gray-400 rounded-lg p-10 cursor-pointer mb-5 ${dragOver ? 'border-blue-300 bg-gray-100' : ''}`}
