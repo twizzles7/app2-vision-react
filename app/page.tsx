@@ -1,7 +1,7 @@
 "use client"
 
 import ChatComponent from './ChatComponent';
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { convertFileToBase64 } from './utils/convertFileToBase64';
 
 // The main App component
@@ -23,6 +23,17 @@ const App: React.FC = () => {
   const [result4, setResult4] = useState<string>('');
   const [result5, setResult5] = useState<string>('');
   const [result6, setResult6] = useState<string>('');
+
+  // New state variable for trial count
+  const [trialCount, setTrialCount] = useState<number>(0);
+
+  // Load trial count from local storage when component mounts
+  useEffect(() => {
+    const storedTrialCount = localStorage.getItem('trialCount');
+    if (storedTrialCount) {
+      setTrialCount(Number(storedTrialCount));
+    }
+  }, []);
 
   // Names
   const resultNames = [
@@ -55,6 +66,14 @@ const App: React.FC = () => {
       return;
     }
 
+    // Check trial count before proceeding
+    if (trialCount >= 5) {
+      alert('popup text');
+      // Redirect to Stripe payment page
+      window.location.href = 'https://buy.stripe.com/3cs7uB92D10G1IQ289';
+      return;
+    }
+
     setStatusMessage('Processing');
     setUploadProgress(20); // Adjust progress after image conversion
 
@@ -65,12 +84,7 @@ const App: React.FC = () => {
       "respond in a style that matches the tone of the email",
       "Generate a response to this email. The tone should be confident and graceful.",
       "Construct a response to a request for assistance that subtly conveys competence and a preference for minimal interaction. acknowledge but decline subtly to do any work in the most professional way. The tone should be professional yet distant.",
-      "you are an expert person analyzer. guess the MBTI of this person, based on their email. use words and elements from their email as evidence for your statement. use bullet points, answer in a hierarchy and be very structured in your answer. use formatting as well and bold where needed.
-
-      the structure of your answer
-      - the first thing you should say is "they are likely to be a" + the likely MBTI type. 
-      - "what are" the likely MBTI type "known for": what they are known for  
-      - "why?" your reasoning "
+      "you are an expert person analyzer. guess the MBTI of this person, based on their email. use words and elements from their email as evidence for your statement. use bullet points, answer in a hierarchy and be very structured in your answer. use formatting as well and bold where needed. the structure of your answer. the first thing you should say is 1) *they are likely to be a* + the likely MBTI type. 2) *what are* the likely MBTI type *known for*: what they are known for 3) *why?* your reasoning "
     ];
 
     // Send a POST request to your API endpoint for each prompt
@@ -116,6 +130,11 @@ const App: React.FC = () => {
 
     setStatusMessage('Analysis complete.');
     setUploadProgress(100); // Final progress
+
+    // Increment trial count after successful analysis
+    const newTrialCount = trialCount + 1;
+    setTrialCount(newTrialCount);
+    localStorage.setItem('trialCount', String(newTrialCount));
   };
 
   // Callbacks for handling drag-and-drop events
@@ -203,6 +222,7 @@ const App: React.FC = () => {
     </div>
   </div>
 );
+
 }
 
 export default App;
