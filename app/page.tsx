@@ -219,7 +219,9 @@ const App: React.FC = () => {
           {[result1, result2, result3, result4, result5, result6].map((result, index) => (
             <div key={index} className="w-full sm:w-1/2 lg:w-1/3 p-2">
               <strong>{resultNames[index]}:</strong>
-              <div className="w-full h-45 p-2 mt-2 border border-gray-300 rounded-lg resize-y overflow-auto" dangerouslySetInnerHTML={{ __html: marked(result) }} />
+              <div className="w-full h-45 p-2 mt-2 border border-gray-300 rounded-lg resize-y overflow-auto">
+                {result}
+              </div>
             </div>
           ))}
         </div>
