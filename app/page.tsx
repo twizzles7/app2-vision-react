@@ -3,6 +3,7 @@
 import ChatComponent from './ChatComponent';
 import React, { useState, useEffect, useCallback } from 'react';
 import { convertFileToBase64 } from './utils/convertFileToBase64';
+import marked from 'marked';
 
 // The main App component
 const App: React.FC = () => {
@@ -68,9 +69,10 @@ const App: React.FC = () => {
 
     // Check trial count before proceeding
     if (trialCount >= 5) {
-      alert('popup text');
-      // Redirect to Stripe payment page
-      window.location.href = 'https://buy.stripe.com/3cs7uB92D10G1IQ289';
+      if (window.confirm("It costs me money to maintain servers, would you like to support and buy lifetime access for $2.99? For feedback email reallycoolapp7@gmail.com")) {
+        // Redirect to Stripe payment page
+        window.location.href = 'https://buy.stripe.com/3cs7uB92D10G1IQ289';
+      }
       return;
     }
 
@@ -217,7 +219,7 @@ const App: React.FC = () => {
           {[result1, result2, result3, result4, result5, result6].map((result, index) => (
             <div key={index} className="w-full sm:w-1/2 lg:w-1/3 p-2">
               <strong>{resultNames[index]}:</strong>
-              <textarea value={result} readOnly className="w-full h-36 p-2 mt-2 border border-gray-300 rounded-lg resize-y" />
+              <div className="w-full h-45 p-2 mt-2 border border-gray-300 rounded-lg resize-y overflow-auto" dangerouslySetInnerHTML={{ __html: marked(result) }} />
             </div>
           ))}
         </div>
