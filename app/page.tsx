@@ -38,9 +38,6 @@ const App: React.FC = () => {
 
   // Names
   const resultNames = [
-    "match tone 🤝",
-    "short & professional 👩‍💻",
-    "politely, no 🙅‍♀️",
     "MBTI Advanced Analysis 🙅‍♀️",
     "MBTI Likes and Dislikes",
     "MBTI-Match Response"
@@ -82,9 +79,6 @@ const App: React.FC = () => {
     // Define an array of prompts
     const prompts = [
     // responses
-      "respond in a style that matches the tone of the email",
-      "craft a reply to a request for feedback that exudes capability and professionalism, balancing courteous language with a businesslike approach",
-      "Construct a response to a request for assistance that subtly conveys competence and a preference for minimal interaction. acknowledge but decline subtly to do any work in the most professional way. The tone should be professional yet distant.",
    //mbti   
       "you are an expert person analyzer. you are an expert person analyzer. guess the MBTI of this person. your answer should only be the 4 characters of the MBTI they are likely to be.",
       "you are an expert person analyzer. you are an expert person analyzer. guess the MBTI of this person. give a couple of reasons in bullet points for why they are likely to be this MBTI. use words, sentences and tonality from the communications as proof.",
