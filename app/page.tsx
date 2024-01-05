@@ -119,12 +119,12 @@ const App: React.FC = () => {
     }
 
     // Update the results
-    setResult1(apiResponses[0].analysis);
-    setResult2(apiResponses[1].analysis);
-    setResult3(apiResponses[2].analysis);
-    setResult4(apiResponses[3].analysis);
-    setResult5(apiResponses[4].analysis);
-    setResult6(apiResponses[5].analysis);
+    if (apiResponses[0]) setResult1(apiResponses[0].analysis);
+    if (apiResponses[1]) setResult2(apiResponses[1].analysis);
+    if (apiResponses[2]) setResult3(apiResponses[2].analysis);
+    if (apiResponses[3]) setResult4(apiResponses[3].analysis);
+    if (apiResponses[4]) setResult5(apiResponses[4].analysis);
+    if (apiResponses[5]) setResult6(apiResponses[5].analysis);
 
     setStatusMessage('Analysis complete.');
     setUploadProgress(100); // Final progress
