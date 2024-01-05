@@ -81,11 +81,13 @@ const App: React.FC = () => {
 
     // Define an array of prompts
     const prompts = [
+    // responses
       "respond in a style that matches the tone of the email",
       "craft a reply to a request for feedback that exudes capability and professionalism, balancing courteous language with a businesslike approach",
       "Construct a response to a request for assistance that subtly conveys competence and a preference for minimal interaction. acknowledge but decline subtly to do any work in the most professional way. The tone should be professional yet distant.",
-      "you are an expert person analyzer. guess the MBTI of this person. your answer has to be framed in this way first line is 1) guess the MBTI of this person. you have to say it in the way *they are likely to be * + 4 characters of the MBTI. 2) use words and elements from their email as evidence for why they are this MBTI. answer in a hierarchy and be very structured in your answer. use formatting as well and bold where needed",
-      "you are an expert person analyzer. guess the MBTI of this person. your answer has to be framed in this way first line is 1) guess the MBTI of this person. you have to say it in the way *they are likely to be * + 4 characters of the MBTI. the second line of the answer 2) this *MBTI TYPE* is known for + what they are known for. and 3) how to handle this MBTI type, what they like and dont like. 4) examples of phrases and words you should use with this type",
+   //mbti   
+      "you are an expert person analyzer. you are an expert person analyzer. guess the MBTI of this person. your answer should only be the 4 characters of the MBTI they are likely to be.",
+      "you are an expert person analyzer. you are an expert person analyzer. guess the MBTI of this person. give a couple of reasons in bullet points for why they are likely to be this MBTI. use words, sentences and tonality from the communications as proof.",
       "you are an expert person analyzer. guess the MBTI of this person. your answer has to be framed in this way first line is 1) guess the MBTI of this person. you have to say it in the way *they are likely to be * + 4 characters of the MBTI. the second line of the answer 2) what is the right way to respond to this person, based on their MBTI personality,"
     ];
 
