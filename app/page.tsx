@@ -35,7 +35,7 @@ const App: React.FC = () => {
 
   // Names
   const resultNames = [
-    "MBTI Advanced Analysis 🙅‍♀️",
+    "Personality Traits",
     "MBTI Likes and Dislikes",
     "MBTI-Match Response"
   ];
