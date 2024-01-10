@@ -4,7 +4,6 @@ import ChatComponent from './ChatComponent';
 import React, { useState, useEffect, useCallback } from 'react';
 import { convertFileToBase64 } from './utils/convertFileToBase64';
 import marked from 'marked';
-import OpenAI from 'openai'; // Step 1: Import the OpenAI library
 
 // The main App component
 const App: React.FC = () => {
@@ -22,10 +21,12 @@ const App: React.FC = () => {
   const [result1, setResult1] = useState<string>('');
   const [result2, setResult2] = useState<string>('');
   const [result3, setResult3] = useState<string>('');
-  const [chatCompletionResult, setChatCompletionResult] = useState<string>(''); // Step 5: Add a new state variable for the chat completion result
 
   // New state variable for trial count
   const [trialCount, setTrialCount] = useState<number>(0);
+
+  // New state variable for 'just chat' result
+  const [justChat, setJustChat] = useState<string>('');
 
   // Load trial count from local storage when component mounts
   useEffect(() => {
@@ -33,6 +34,7 @@ const App: React.FC = () => {
     if (storedTrialCount) {
       setTrialCount(Number(storedTrialCount));
     }
+    handleChat();
   }, []);
 
   // Names
@@ -55,6 +57,26 @@ const App: React.FC = () => {
     setBase64Image(base64);
   }, []);
 
+  // Function to handle chat API call
+  const handleChat = async () => {
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        messages: [
+          {"role": "system", "content": "You are a helpful assistant."},
+          {"role": "user", "content": "what is two times four"}
+        ],
+        model: "gpt-3.5-turbo",
+      }),
+    });
+
+    const responseData = await response.json();
+    setJustChat(responseData.choices[0].message.content);
+  };
+
   // Function to handle submission for image analysis
   const handleSubmit = async (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     event.preventDefault();
@@ -62,11 +84,6 @@ const App: React.FC = () => {
       setStatusMessage('No file selected!');
       return;
     }
-
-    // Step 2: Initialize the OpenAI client inside the handleSubmit function
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY || '',
-    });
 
     // Check trial count before proceeding
     if (trialCount >= 200) { // Changed from 1 to 2
@@ -103,21 +120,6 @@ const App: React.FC = () => {
           max_tokens: maxTokens 
         }),
       })
-    ).concat(
-      // Step 3: Add the new API call to the chat completions model inside the Promise.all call
-      openai.chat.completions.create({
-        model: 'gpt-3.5-turbo',
-        messages: [
-          {
-            role: 'system',
-            content: 'You are a helpful assistant.'
-          },
-          {
-            role: 'user',
-            content: 'what is two times four'
-          }
-        ]
-      })
     ));
 
     setUploadProgress(60); // Progress after sending requests
@@ -141,15 +143,6 @@ const App: React.FC = () => {
     if (apiResponses[0]) setResult1(apiResponses[0].analysis);
     if (apiResponses[1]) setResult2(apiResponses[1].analysis);
     if (apiResponses[2]) setResult3(apiResponses[2].analysis);
-
-    // Step 4: Extract the assistant's reply from the response with error handling
-    const chatCompletionResponse = apiResponses[apiResponses.length - 1];
-    if (chatCompletionResponse && chatCompletionResponse.choices && chatCompletionResponse.choices[0] && chatCompletionResponse.choices[0].message) {
-      const chatCompletion = chatCompletionResponse.choices[0].message.content;
-      setChatCompletionResult(chatCompletion);
-    } else {
-      console.error('Unexpected response from chat completions API:', chatCompletionResponse);
-    }
 
     setStatusMessage('Analysis complete.');
     setUploadProgress(100); // Final progress
@@ -248,11 +241,12 @@ const App: React.FC = () => {
         </div>
       )}
 
-      {/* Step 7: Display the chat completion result in your JSX */}
-      {chatCompletionResult && (
-        <div>
-          <strong>Chat Completion Result:</strong>
-          <p>{chatCompletionResult}</p>
+      {justChat && (
+        <div className="w-full sm:w-1/2 lg:w-1/3 p-2">
+          <strong>Just Chat:</strong>
+          <div className="w-full h-45 p-2 mt-2 border border-gray-300 rounded-lg resize-y overflow-auto">
+            {justChat}
+          </div>
         </div>
       )}
     </div>
