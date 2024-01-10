@@ -14,7 +14,7 @@ const App: React.FC = () => {
   const [uploadProgress, setUploadProgress] = useState<number>(0); // Manages the upload progress
   const [dragOver, setDragOver] = useState<boolean>(false); // UI state for drag-and-drop
   const [textInput, setTextInput] = useState<string>(''); // Custom text input by the user
-  const [maxTokens, setMaxTokens] = useState<number>(50); // Max tokens for analysis
+  const [maxTokens, setMaxTokens] = useState<number>(200); // Max tokens for analysis
   const [base64Image, setBase64Image] = useState<string>('');
 
   // Add new state variables for each result container
@@ -77,7 +77,7 @@ const App: React.FC = () => {
     const prompts = [
     // responses
    //mbti   
-      "you're an expert person analyzer. describe some of the characteristics of the person im talking to. see screenshot. give it to me in five bullet points.",
+      "you're an expert person analyzer. describe some of the personality characteristics of the person im talking to. see screenshot. give it to me in five bullet points.",
       "what is ten times ten",
       "you are an expert person analyzer. guess the MBTI of this person. your answer has to be framed in this way first line is 1) guess the MBTI of this person. you have to say it in the way *they are likely to be * + 4 characters of the MBTI. the second line of the answer 2) what is the right way to respond to this person, based on their MBTI personality,"
     ];
@@ -159,7 +159,7 @@ const App: React.FC = () => {
         <p className="text-sm text-gray-600 mb-1">Max tokens: {maxTokens}</p>
         <input 
           type="range" 
-          min="50" 
+          min="200" 
           max="800" 
           value={maxTokens} 
           onChange={(e) => setMaxTokens(Number(e.target.value))} 
