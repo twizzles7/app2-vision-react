@@ -77,8 +77,8 @@ const App: React.FC = () => {
     const prompts = [
     // responses
    //mbti   
-      "you are an expert person analyzer. you are an expert person analyzer. guess the MBTI of this person. your answer is two parts. the first part is STRICTLY 4 characters, and should be one of the following: ISTJ, ISFJ, INFJ, INTJ, ISTP, ISFP, INFP, INTP, ESTP, ESFP, ENFP, ENTP, ESTJ, ESFJ, ENFJ, ENTJ.       the second part is: one up to three bullet points that highlight why this person is that particular MBTI profile.",
-      "you are an expert person analyzer. you are an expert person analyzer. guess the MBTI of this person. give a couple of reasons in bullet points for why they are likely to be this MBTI. use words, sentences and tonality from the communications as proof.",
+      "you are an expert person analyzer. take a wild guess on what this person's MBTI is. its ok to be wrong",
+      "what is ten times ten",
       "you are an expert person analyzer. guess the MBTI of this person. your answer has to be framed in this way first line is 1) guess the MBTI of this person. you have to say it in the way *they are likely to be * + 4 characters of the MBTI. the second line of the answer 2) what is the right way to respond to this person, based on their MBTI personality,"
     ];
 
