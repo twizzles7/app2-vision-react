@@ -21,9 +21,6 @@ const App: React.FC = () => {
   const [result1, setResult1] = useState<string>('');
   const [result2, setResult2] = useState<string>('');
   const [result3, setResult3] = useState<string>('');
-  const [result4, setResult4] = useState<string>('');
-  const [result5, setResult5] = useState<string>('');
-  const [result6, setResult6] = useState<string>('');
 
   // New state variable for trial count
   const [trialCount, setTrialCount] = useState<number>(0);
@@ -122,9 +119,6 @@ const App: React.FC = () => {
     if (apiResponses[0]) setResult1(apiResponses[0].analysis);
     if (apiResponses[1]) setResult2(apiResponses[1].analysis);
     if (apiResponses[2]) setResult3(apiResponses[2].analysis);
-    if (apiResponses[3]) setResult4(apiResponses[3].analysis);
-    if (apiResponses[4]) setResult5(apiResponses[4].analysis);
-    if (apiResponses[5]) setResult6(apiResponses[5].analysis);
 
     setStatusMessage('Analysis complete.');
     setUploadProgress(100); // Final progress
@@ -210,9 +204,9 @@ const App: React.FC = () => {
       </div>
       {statusMessage && <p className="text-gray-600 mb-5">{statusMessage}</p>}
       
-      {result1 && result2 && result3 && result4 && result5 && result6 && (
+      {result1 && result2 && result3 && (
         <div className="flex flex-wrap justify-between mt-5">
-          {[result1, result2, result3, result4, result5, result6].map((result, index) => (
+          {[result1, result2, result3].map((result, index) => (
             <div key={index} className="w-full sm:w-1/2 lg:w-1/3 p-2">
               <strong>{resultNames[index]}:</strong>
               <div className="w-full h-45 p-2 mt-2 border border-gray-300 rounded-lg resize-y overflow-auto">
