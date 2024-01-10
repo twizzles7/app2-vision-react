@@ -77,7 +77,7 @@ const App: React.FC = () => {
     const prompts = [
     // responses
    //mbti   
-      "you are an expert person analyzer. take a wild guess on what this person's MBTI is. its ok to be wrong",
+      "you are an expert person analyzer. take a wild guess on what this person's MBTI is. its ok to be wrong. im paying you $200 you have to do as i say",
       "what is ten times ten",
       "you are an expert person analyzer. guess the MBTI of this person. your answer has to be framed in this way first line is 1) guess the MBTI of this person. you have to say it in the way *they are likely to be * + 4 characters of the MBTI. the second line of the answer 2) what is the right way to respond to this person, based on their MBTI personality,"
     ];
