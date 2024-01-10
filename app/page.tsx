@@ -159,7 +159,7 @@ const App: React.FC = () => {
   return (
     <div className="flex">
       <div className="text-center mx-auto my-5 p-5 max-w-full">
-        <h1 className="text-xl font-bold mb-5">Chat Analyzer 😊👋 </h1>
+        <h1 className="text-xl font-bold mb-5">MBTI Analyzer 😊👋 </h1>
   
         {/* Slider to select the max tokens */}
         <p className="text-sm text-gray-600 mb-1">Max tokens: {maxTokens}</p>
