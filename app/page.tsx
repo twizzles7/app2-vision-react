@@ -439,7 +439,7 @@ const App: React.FC = () => {
           {[result1, result2, result3].map((result, index) => (
             <div key={index} className="w-full sm:w-1/2 lg:w-1/3 p-2">
               <strong>{resultNames[index]}:</strong>
-              <divMax tokens: {maxTokens}</p>
+              <p> Max tokens: {maxTokens}</p>
         <input 
           type="range" 
           min="50" 
