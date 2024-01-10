@@ -159,7 +159,7 @@ const App: React.FC = () => {
   return (
     <div className="flex">
       <div className="text-center mx-auto my-5 p-5 max-w-full">
-        <h1 className="text-xl font-bold mb-5">Bye Email Anxiety333 😊👋 </h1>
+        <h1 className="text-xl font-bold mb-5">Chat Analyzer 😊👋 </h1>
   
         {/* Slider to select the max tokens */}
         <p className="text-sm text-gray-600 mb-1">Max tokens: {maxTokens}</p>
@@ -196,7 +196,7 @@ const App: React.FC = () => {
         {preview ? (
           <img src={preview} alt="Preview" className="max-w-full max-h-48 mb-5 mx-auto" />
         ) : (
-          <p>Drag and drop a screenshot of your email here, or click to select an image to upload.</p>
+          <p>Drag and drop a screenshot of your chat here, or click to select an image to upload.</p>
         )}
       </div>
       <div className="flex justify-center items-center mb-5">
